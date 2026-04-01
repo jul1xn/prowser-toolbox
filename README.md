@@ -1,4 +1,4 @@
-# prowser-toolbox
+# Prowser Toolbox
 My own toolbox website to do certain actions and not go from site to site
 
 ## How to add new tools
