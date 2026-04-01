@@ -4,7 +4,7 @@
     <h1>All Tools</h1>
     <div class="my-4" >
         <% tools.forEach(tool => { %>
-            <a class="card mb-3" href="/toolbox<%= tool.url %>" style="text-decoration: none; color: inherit;">
+            <a class="card mb-3" href="/toolbox/<%= tool.url %>" style="text-decoration: none; color: inherit;">
                 <div class="card-body">
                     <h5 class="card-title"><%= tool.name %></h5>
                     <p class="card-text"><%= tool.description %></p>

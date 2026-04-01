@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
 });
 
 config.tools.forEach(tool => {
-    router.get(tool.url, (req, res) => {
+    router.get("/" + tool.url, (req, res) => {
         res.render(`toolbox/${tool.view}`, {page: tool.name, tool: tool, config: config});
     });
 });

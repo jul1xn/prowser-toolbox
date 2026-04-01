@@ -9,6 +9,11 @@
     </title>
     <link href="/css/styles.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href="/css/styless.css" rel="stylesheet" crossorigin="anonymous">
+    <% if (locals.tool) { %>
+     <% if (tool.css) { %>
+      <link href="/css/<%= tool.css %>" rel="stylesheet" crossorigin="anonymous">
+     <% } %>
+    <% } %>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
