@@ -10,6 +10,9 @@ app.use("/", discoverRouter);
 const toolboxRouter = require("./routes/toolbox");
 app.use("/toolbox", toolboxRouter);
 
+const apiRouter = require("./routes/api");
+app.use("/api", apiRouter);
+
 app.listen(8080, () => {
     console.log("Listening on http://localhost:8080");
 })

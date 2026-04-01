@@ -28,13 +28,13 @@
                     <% config.links.forEach(link=> { %>
                         <% if (link.name===page) { %>
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="<%= link.url %>">
+                                <a class="nav-link active" aria-current="page" href="<%= link.url %>" target="<%= link.target ?? '_self' %>">
                                     <%= link.name %>
                                 </a>
                             </li>
                             <% } else { %>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="<%= link.url %>">
+                                    <a class="nav-link" href="<%= link.url %>" target="<%= link.target ?? '_self' %>">
                                         <%= link.name %>
                                     </a>
                                 </li>

@@ -11,7 +11,16 @@ const config = {
         },
         {
             name: "Contact",
-            url: "https://portfolio.prowser.nl/contact"
+            url: "https://portfolio.prowser.nl/contact",
+            target: "_blank"
+        }
+    ],
+    tools: [
+        {
+            name: "Base64 Encoder/Decoder",
+            description: "Encode and decode Base64 strings instantly.",
+            url: "/toolbox/base64-encoder-decoder",
+            view: "base64-encoder-decoder"
         }
     ]
 }
