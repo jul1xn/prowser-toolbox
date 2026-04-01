@@ -21,7 +21,8 @@ const config = {
             description: "Encode and decode Base64 strings instantly.",
             url: "base64-encoder-decoder",
             view: "base64-encoder-decoder",
-            javascript: "base64-coder.js"
+            javascript: "base64-coder.js",
+            css: "base64-coder.css"
         }
     ]
 }

@@ -1,29 +1,36 @@
 <%- include('../include/tool-header.ejs') %>
+  <a class="popover-dismiss" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="Copied to clipboard!" ></a>
 
-<div class="row mb-3">
-  <div class="col">
-    <div class="btn-group" id="action-select">
-      <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Select Action
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item">Encode</a></li>
-        <li><a class="dropdown-item">Decode</a></li>
-      </ul>
+  <div class="row mb-3">
+    <div class="col">
+      <div class="btn-group" id="action-select">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          Select Action
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item">Encode</a></li>
+          <li><a class="dropdown-item">Decode</a></li>
+        </ul>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="row mb-3">
-  <textarea class="form-control mx-2" id="input-text" rows="10" placeholder="Enter encoded/decoded text here..."></textarea>
-</div>
+  <div class="row mb-4">
+    <textarea class="form-control mx-2" id="input-text" rows="10"
+      placeholder="Enter encoded/decoded text here..."></textarea>
+  </div>
 
-<button class="btn big-btn btn-primary fs-4 mb-4" id="execute-btn">
-  Execute
-</button>
+  <div class="row mb-4">
+    <h4 class="mb-3">Upload a file to convert</h4>
+    <input class="form-control mx-2" type="file" id="formFile">
+  </div>
 
-<div class="row">
-  <div class="alert alert-danger" role="alert" id="error-message" style="display: none;" ></div>
-</div>
+  <button class="btn big-btn btn-primary fs-4 mb-5" id="execute-btn">
+    Execute
+  </button>
 
-<%- include('../include/tool-footer.ejs') %>
+  <div class="row">
+    <div class="alert alert-danger" role="alert" id="error-message" style="display: none;"></div>
+  </div>
+
+  <%- include('../include/tool-footer.ejs') %>
