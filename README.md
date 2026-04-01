@@ -9,7 +9,7 @@ My own toolbox website to do certain actions and not go from site to site
 
 ## How to add custom logic and styling to tools
 
-To add custom logic (javascript) to a tool, you do the following:
+### To add custom logic (javascript) to a tool, you do the following:
 1. Create a new javascript file in `public/js` and name it appropriately.
 2. Reference it in the `constants.js` file as shown below. It will automaticly get added to the tool's page.
 ```
@@ -22,7 +22,7 @@ To add custom logic (javascript) to a tool, you do the following:
 }
 ```
 
-To add custom styling to a page, you do the following:
+### To add custom styling to a page, you do the following:
 1. Create a new css file in `public/css` and name it appropriately.
 2. Reference it in the `constants.js` file as shown below. It will automaticly get added to the tool's page.
 ```
