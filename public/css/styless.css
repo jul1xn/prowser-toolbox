@@ -1,0 +1,184 @@
+.navbar-nav .nav-link {
+    font-size: 1.3rem;
+    margin-right: 2rem;
+}
+
+.icon-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+a {
+    transition: color .25s ease-in-out, background-color .25s ease-in-out, border-color .25s ease-in-out !important;
+}
+
+footer div div ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.btn.big-btn {
+    transition:
+        transform .2s ease-in-out,
+        color .15s ease-in-out,
+        background-color .15s ease-in-out,
+        border-color .15s ease-in-out,
+        box-shadow .15s ease-in-out !important;
+
+    padding: .6rem 1rem;
+}
+
+.btn.big-btn:hover {
+    transform: scale(1.025);
+}
+
+@media (max-width: 1000px) {
+    .container.mt-4 .row>.col-4.mx-auto {
+        display: none !important;
+    }
+
+    .container.mt-4 .row>.col-6.mx-auto {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        text-align: center !important;
+    }
+
+    .container.mt-4 .row>.col-6.mx-auto h1,
+    .container.mt-4 .row>.col-6.mx-auto p,
+    .container.mt-4 .row>.col-6.mx-auto .btn {
+        text-align: center !important;
+        margin-left: 2rem !important;
+        margin-right: 2rem !important;
+    }
+
+    .container.mt-4 .row>.col-6.mx-auto .btn.big-btn {
+        display: inline-block !important;
+    }
+
+    .homepage .row>.col-5,
+    .homepage .row>.col-5.text-end.align-items-center.justify-content-center.d-flex {
+        display: none !important;
+    }
+
+    .homepage .row>.col-7,
+    .homepage .row>.col-7.text-start.pe-5 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        text-align: center !important;
+    }
+
+    .homepage .row>.col-7 h1,
+    .homepage .row>.col-7 p,
+    .homepage .row>.col-7 .btn {
+        text-align: center !important;
+        margin-left: 1rem !important;
+        margin-right: 1rem !important;
+    }
+
+    .homepage .row>.col-7 h1 {
+        font-size: 4rem !important;
+    }
+}
+
+@media (max-width: 620px) {
+    .homepage #counter-container {
+        display: inline-block !important;
+        text-align: center !important;
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .homepage #counter-container .counter {
+        margin-bottom: 3rem !important;
+    }
+
+    .homepage #counter-container .counter #number {
+        font-size: 3rem;
+    }
+
+    .homepage #counter-container .counter #text {
+        font-size: 1.5rem;
+    }
+
+    .homepage .row h2 {
+        font-size: 2rem !important;
+    }
+}
+
+@media screen and (max-width: 990px) {
+    .homepage #projecten-container {
+        display: inline-block !important;
+    }
+
+    .homepage #projecten-container .card {
+        margin-bottom: 1.5rem !important;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    footer .container .row {
+        display: inline-block !important;
+    }
+
+    footer .container .row .col {
+        margin-bottom: 2.5rem !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #projecten-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    #projecten-container .projectCard,
+    .projectCard {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 auto !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media screen and (max-width: 770px) {
+    .container.project .row {
+        display: inline-block !important;
+    }
+
+    .container.project .row .col {
+        margin-bottom: 1rem !important;
+    }
+
+    .container.project .row .col#project-images {
+        align-items: center !important;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .container.project .row .col#project-images .card {
+        width: 100% !important;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .navbar-brand .brand-text {
+        display: none;
+    }
+}
+
+.projecten-title {
+    text-decoration: none;
+}

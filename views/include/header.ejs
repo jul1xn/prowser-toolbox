@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="nl" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="/img/logo_80.png">
+    <title>
+        <%= config.name %> - <%= page %>
+    </title>
+    <link href="/css/styles.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/css/styless.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/img/logo_80.png" alt="Logo" width="auto" height="45"
+                    class="d-inline-block align-text-center">
+                <span class="brand-text"><%= config.name %></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav d-flex ms-auto">
+                    <% config.links.forEach(link=> { %>
+                        <% if (link.name===page) { %>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="<%= link.url %>">
+                                    <%= link.name %>
+                                </a>
+                            </li>
+                            <% } else { %>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<%= link.url %>">
+                                        <%= link.name %>
+                                    </a>
+                                </li>
+                                <% } %>
+                                    <% }) %>
+                </ul>
+            </div>
+        </div>
+    </nav>

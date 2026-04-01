@@ -1,0 +1,24 @@
+// Header
+// $body-tertiary-bg: #5e009c;
+$navbar-padding-y: 1.2rem;
+$navbar-padding-x: 1.2rem;
+$navbar-brand-font-size: 1.7rem;
+
+$navbar-dark-color: #d7d7d7;
+$navbar-dark-hover-color: #9371af;
+$navbar-dark-active-color: #704197;
+
+$navbar-dark-brand-color: #ffffff;
+
+
+$primary: #4b127a;
+$body-tertiary-bg-dark: #222222;
+$body-bg-dark: #2a2a2a;
+
+
+// import bootstrap
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+[class*="display-"] {
+    color: $white;
+}

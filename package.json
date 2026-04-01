@@ -1,0 +1,28 @@
+{
+  "name": "prowser-toolbox",
+  "version": "1.0.0",
+  "description": "My own toolbox website to do certain actions and not go from site to site",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jul1xn/prowser-toolbox.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jul1xn/prowser-toolbox/issues"
+  },
+  "homepage": "https://github.com/jul1xn/prowser-toolbox#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
