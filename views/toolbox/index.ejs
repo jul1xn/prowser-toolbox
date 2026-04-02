@@ -2,26 +2,33 @@
 
 <div class="container mt-4">
     <h1>All Tools</h1>
-    <form class="row my-4" method="GET" action="/toolbox" >
+    <form class="row my-4" method="GET" action="/toolbox">
         <div class="col-10">
-            <input name="q" class="form-control" type="text" placeholder="Enter tool name..." id="search-input" value="<%= search %>" >
+            <input name="q" class="form-control" type="text" placeholder="Enter tool name..." id="search-input"
+                value="<%= search %>">
         </div>
         <div class="col-2">
-            <input type="submit" class="btn btn-primary w-100" value="Search" >
+            <input type="submit" class="btn btn-primary w-100" value="Search">
         </div>
     </form>
-    <div class="my-4" >
-        <% if (tools.length === 0) { %>
-            <p class="text-center" >No tools found with this search :(</p>
+    <div class="row my-4 g-3">
+        <% if (tools.length===0) { %>
+            <p class="text-center">No tools found with this search :(</p>
         <% } else { %>
-            <% tools.forEach(tool => { %>
-            <a class="card mb-3 toolCard" href="/toolbox/<%= tool.url %>">
-                <div class="card-body">
-                    <h5 class="card-title"><%= tool.name %></h5>
-                    <p class="card-text"><%= tool.description %></p>
+            <% tools.forEach(tool=> { %>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <a class="card toolCard h-100 text-decoration-none" href="/toolbox/<%= tool.url %>">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= tool.name %>
+                            </h5>
+                            <p class="card-text">
+                                <%= tool.description %>
+                            </p>
+                        </div>
+                    </a>
                 </div>
-            </a>
-        <% }); %>
+            <% }); %>
         <% } %>
     </div>
 </div>

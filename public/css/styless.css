@@ -1,7 +1,6 @@
 .toolCard {
     text-decoration: none;
     color: inherit;
-    max-width: 25%;
     transition: transform 0.2s ease !important;
 }
 
