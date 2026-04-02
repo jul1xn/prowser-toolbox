@@ -1,3 +1,14 @@
+.toolCard {
+    text-decoration: none;
+    color: inherit;
+    max-width: 25%;
+    transition: transform 0.2s ease !important;
+}
+
+.toolCard:hover {
+    transform: scale(1.025);
+}
+
 .navbar-nav .nav-link {
     font-size: 1.3rem;
     margin-right: 2rem;

@@ -3,12 +3,18 @@ const router = express.Router();
 const config = require("../constants");
 
 router.get("/", (req, res) => {
-    res.render("toolbox", {page: "Tools", tools: config.tools, config: config});
+    let filteredTools = config.tools;
+    if (req.query && req.query.q) {
+        const searchQuery = req.query.q;
+        filteredTools = filteredTools.filter((tool) => tool.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+
+    res.render("toolbox", { page: "Tools", tools: filteredTools, config: config, search: req.query.q ?? "" });
 });
 
 config.tools.forEach(tool => {
     router.get("/" + tool.url, (req, res) => {
-        res.render(`toolbox/${tool.view}`, {page: tool.name, tool: tool, config: config});
+        res.render(`toolbox/${tool.view}`, { page: tool.name, tool: tool, config: config });
     });
 });
 
