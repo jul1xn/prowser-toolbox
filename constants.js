@@ -22,7 +22,13 @@ const config = {
             url: "base64-encoder-decoder",
             view: "base64-encoder-decoder",
             javascript: "base64-coder.js",
-            css: "base64-coder.css"
+        },
+        {
+            name: "URL Encoder/Decoder",
+            description: "Encode and decode URL parameters instantly.",
+            url: "url-encoder-decoder",
+            view: "url-encoder-decoder",
+            javascript: "url-coder.js",
         }
     ]
 }
