@@ -22,8 +22,20 @@ router.get("/", (req, res) => {
 });
 
 config.tools.forEach(tool => {
-    router.get("/" + tool.url, (req, res) => {
-        res.render(`toolbox/${tool.view}`, { page: tool.name, tool: tool, config: config });
+    router.get("/" + tool.url, async (req, res) => {
+        let extraData = {};
+
+        if (tool.handler) {
+            extraData = await tool.handler(req);
+        }
+
+        res.render(`toolbox/${tool.view}`, {
+            page: tool.name,
+            tool: tool,
+            config: config,
+            request: req,
+            ...extraData
+        });
     });
 });
 

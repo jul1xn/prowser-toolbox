@@ -1,0 +1,36 @@
+<%- include('../include/tool-header.ejs') %>
+
+<form method="GET">
+    <div class="row my-4">
+        <div class="col-10">
+            <input name="url" class="form-control" type="text" placeholder="Enter Youtube URL..." id="search-input" required value="<%= locals.url %>"> 
+        </div>
+        <div class="col-2">
+            <input type="submit" class="btn btn-primary w-100" value="Search">
+        </div>
+    </div>
+
+    <% if (info) { %>
+        <input type="checkbox" checked id="agree-terms" required style="display: none;">
+    <% } else { %>
+        <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="agree-terms" required>
+        <label class="form-check-label" for="agree-terms">I agree to the terms 
+            <ion-icon name="information-circle-outline" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="<%= config.terms.youtube %>"></ion-icon>
+        </label>
+    </div>
+    <% } %>
+</form>
+
+<% if (info) { %>
+<div class="mb-3">
+    <h3><%= info.basic_info.title %></h3>
+    <p>
+        <iframe width="560" height="315" src="<%= info.basic_info.embed.iframe_url %>" title="" frameBorder="0"   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"  allowFullScreen>
+        </iframe>
+    </p>
+    <button type="button" class="btn btn-primary mt-3" id="download-btn">Download Video</button>
+</div>
+<% } %>
+
+<%- include('../include/tool-footer.ejs') %>

@@ -23,6 +23,7 @@
     "bootstrap": "^5.3.8",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "youtubei.js": "^17.0.1"
   }
 }
