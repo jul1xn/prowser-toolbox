@@ -5,8 +5,17 @@ const config = require("../constants");
 router.get("/", (req, res) => {
     let filteredTools = config.tools;
     if (req.query && req.query.q) {
-        const searchQuery = req.query.q;
-        filteredTools = filteredTools.filter((tool) => tool.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        const searchQuery = req.query.q
+            .toLowerCase()
+            .trim()
+            .split(/\s+/)
+            .map(word => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+            
+        const pattern = searchQuery.join(".*");
+        const regex = new RegExp(pattern, "i");
+        filteredTools = filteredTools.filter(tool =>
+            regex.test(tool.name.toLowerCase())
+        );
     }
 
     res.render("toolbox", { page: "Tools", tools: filteredTools, config: config, search: req.query.q ?? "" });
