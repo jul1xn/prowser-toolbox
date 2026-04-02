@@ -29,6 +29,13 @@ const config = {
             url: "url-encoder-decoder",
             view: "url-encoder-decoder",
             javascript: "url-coder.js",
+        },
+        {
+            name: "Password Generator",
+            description: "Create complex generated passwords.",
+            url: "password-generator",
+            view: "password-generator",
+            javascript: "password-gen.js"
         }
     ]
 }
