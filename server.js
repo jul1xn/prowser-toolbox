@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const data = require("./data");
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
