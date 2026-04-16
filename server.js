@@ -1,8 +1,21 @@
 const express = require("express");
 const app = express();
 const data = require("./data");
+const config = require("./constants");
+
+data.initializePageViews(config.tools);
 
 app.set("view engine", "ejs");
+
+app.get("/:key", async (req, res, next) => {
+    const file = await data.getFileByKey(req.params.key);
+    if (file) {
+        return res.render("toolbox/temp-file-upload-view", { ...file, config, page: file.filename, file_size_formatted: data.formatSize(file.file_size) });
+    }
+
+    return next();
+});
+
 app.use(express.static("public"));
 
 const discoverRouter = require("./routes/discover");

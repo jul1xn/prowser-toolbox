@@ -1,0 +1,15 @@
+<%- include('../include/header.ejs') %>
+
+<div class="container mt-4 text-center">
+    <h1 class="display-5 mb-4" >Uploaded file</h1>
+    <h2><%= locals.filename%> (<%= locals.file_size_formatted %>)</h2>
+    <div class="my-4">
+        <img src="/api/files/<%= locals.file_key %>"
+                onerror="this.style.display='none'"
+                style="max-width: 100%; max-height: 280px; border-radius: 8px;">
+    </div>
+    <p class="fs-5" >Uploaded at: <%= new Date(locals.uploaded_at).toLocaleString() %></p>
+    <a class="btn btn-primary big-btn" href="/api/files/<%= locals.file_key %>" target="_blank" >Download</a>
+</div>
+
+<%- include('../include/footer.ejs') %>

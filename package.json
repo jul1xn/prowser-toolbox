@@ -23,6 +23,7 @@
     "bootstrap": "^5.3.8",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
+    "multer": "^2.1.1",
     "nodemon": "^3.1.14",
     "sqlite3": "^6.0.1",
     "youtubei.js": "^17.0.1"

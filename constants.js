@@ -1,4 +1,5 @@
 //const { Innertube } = require('youtubei.js');
+const data = require('./data');
 
 const config = {
     name: "Prowser Toolbox",
@@ -38,6 +39,21 @@ const config = {
             url: "password-generator",
             view: "password-generator",
             javascript: "password-gen.js"
+        },
+        {
+            name: "Temporary file upload",
+            description: "Upload any file for a limited time. Usefull for transferring files very quickly.",
+            url: "temp-file-upload",
+            view: "temp-file-upload",
+            javascript: "file-upload.js",
+            css: "temp-file-upload.css",
+            handler: async (req) => {
+                if (!req.query.file) return {};
+                else {
+                    const file = await data.getFileByKey(req.query.file);
+                    return {...file, url: `/api/files/${file.file_key}`, file_size_formatted: data.formatSize(file.file_size) };
+                }
+            }
         },
         {
             name: "Youtube Downloader",

@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
-const config = require('./constants');
 const path = require('path');
+const fs = require("fs");
 const db = new sqlite3.Database(path.resolve(__dirname, 'data.db'));
 
 db.serialize(() => {
@@ -10,20 +10,62 @@ db.serialize(() => {
             count INTEGER DEFAULT 0
         )
     `);
+    db.run(`
+CREATE TABLE IF NOT EXISTS uploads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT NOT NULL,
+    file_key TEXT UNIQUE NOT NULL,
+    uploaded_at TEXT NOT NULL,
+    file_size INTEGER NOT NULL DEFAULT 0
+)
+`);
 });
 
-db.serialize(() => {
-    const stmt = db.prepare(`
+function scheduleFileDeletion(fileKey, filename, delayMs = 60 * 60 * 1000) {
+    console.log("Scheduling file deletion in", delayMs, "ms for key", fileKey);
+    setTimeout(async () => {
+        try {
+            const filePath = path.join(__dirname, "uploads", filename);
+
+            // delete file from disk
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+                console.log("Deleted file:", filename);
+            }
+
+            // delete DB record
+            db.run(
+                `DELETE FROM uploads WHERE file_key = ?`,
+                [fileKey],
+                (err) => {
+                    if (err) {
+                        console.error("DB delete error:", err);
+                    } else {
+                        console.log("Deleted DB record:", fileKey);
+                    }
+                }
+            );
+
+        } catch (err) {
+            console.error("Scheduled deletion error:", err);
+        }
+    }, delayMs);
+}
+
+function initializePageViews(tools) {
+    db.serialize(() => {
+        const stmt = db.prepare(`
             INSERT OR IGNORE INTO page_views (tool_url, count)
             VALUES (?, 0)
         `);
 
-    config.tools.forEach(tool => {
-        stmt.run(tool.url);
-    });
+        tools.forEach(tool => {
+            stmt.run(tool.url);
+        });
 
-    stmt.finalize();
-});
+        stmt.finalize();
+    });
+}
 
 function UpdatePageViews(tool_url, amount) {
     db.run(`
@@ -51,7 +93,7 @@ function getPageViewsAsync(tool_url) {
     });
 }
 
-function getMostPopularTools(limit = 5) {
+function getMostPopularTools(limit = 4) {
     return new Promise((resolve, reject) => {
         db.all(
             `
@@ -67,6 +109,68 @@ function getMostPopularTools(limit = 5) {
             }
         );
     });
+}
+
+function addUpload(filename, uploadedAt, fileSize) {
+    return new Promise((resolve, reject) => {
+        const fileKey = generateFileKey();
+
+        db.run(
+            `INSERT INTO uploads (filename, file_key, uploaded_at, file_size)
+             VALUES (?, ?, ?, ?)`,
+            [filename, fileKey, uploadedAt, fileSize],
+            function (err) {
+                if (err) return reject(err);
+
+                scheduleFileDeletion(fileKey, filename, 60 * 60 * 1000);
+
+                resolve({
+                    id: this.lastID,
+                    fileKey
+                });
+            }
+        );
+    });
+}
+
+// (optional) fetch uploads later
+function getUploads() {
+    return new Promise((resolve, reject) => {
+        db.all(`SELECT * FROM uploads ORDER BY id DESC`, [], (err, rows) => {
+            if (err) return reject(err);
+            resolve(rows);
+        });
+    });
+}
+
+function getFileByKey(fileKey) {
+    return new Promise((resolve, reject) => {
+        db.get(
+            `SELECT * FROM uploads WHERE file_key = ?`,
+            [fileKey],
+            (err, row) => {
+                if (err) return reject(err);
+                resolve(row);
+            }
+        );
+    });
+}
+
+function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+function generateFileKey(length = 16) {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return result;
 }
 
 const viewCooldowns = new Map(); // key = `${ip}:${tool}`
@@ -85,4 +189,4 @@ function canCountView(ip, tool_url) {
     return true;
 }
 
-module.exports = { UpdatePageViews, getPageViewsAsync, canCountView, getMostPopularTools };
+module.exports = { UpdatePageViews, getPageViewsAsync, canCountView, getMostPopularTools, addUpload, getUploads, getFileByKey, initializePageViews, formatSize };

@@ -1,0 +1,55 @@
+<%- include('../include/tool-header.ejs') %>
+
+<form style="display: none;" method="POST" action="/api/file-upload" id="file-form" enctype="multipart/form-data">
+<input type="file" name="file" id="file-field">
+</form>
+
+<% if (locals.file_key) { %>
+
+<div class="my-5 text-center">
+    <h1 class="fw-light mb-2">File uploaded <ion-icon name="checkmark-circle-outline" style="font-size: 32px; color: #28a745;"></ion-icon></h1>
+    <p class="text-muted mb-0"><%= filename %> (<%= file_size_formatted %>)</p>
+    <p class="text-muted mb-5">Your file is ready to share (1 hour limit)</p>
+
+    <% if (locals.url) { %>
+        <div class="mb-5">
+            <img src="<%= locals.url %>"
+                 onerror="this.style.display='none'"
+                 style="max-width: 100%; max-height: 280px; border-radius: 8px;">
+        </div>
+    <% } %>
+
+    <div class="mb-4">
+        <p class="text-muted mb-1">Share link</p>
+        <div class="input-group mb-3 ">
+            <input type="text" id="link" readonly class="form-control" value="https://toolbox.prowser.nl/<%= file_key %>">
+            <button class="btn btn-outline-secondary" id="copy" target="link">Copy link</button>
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <p class="text-muted mb-1">Direct download</p>
+        <div class="input-group mb-3 ">
+            <input type="text" id="download" readonly class="form-control" value="https://toolbox.prowser.nl<%= locals.url %>">
+            <button class="btn btn-outline-secondary" id="copy" target="download">Copy link</button>
+        </div>
+    </div>
+
+    <a href="/toolbox/temp-file-upload" class="text-muted">
+        Upload another file
+    </a>
+</div>
+
+<% } else { %>
+
+<div id="file-upload"
+    class="mt-5 row text-center border border-primary border-2 rounded-4 bg-body-tertiary py-5 mx-5 file-upload">
+    <ion-icon class="fs-1 mb-3" name="cloud-upload"></ion-icon>
+    <h1>Click here to upload a file</h1>
+    <h4 class="display-5 fs-5">Or paste your clipboard using CTRL + V</h4>
+    <div class="lds-dual-ring mt-5 mx-auto" style="display: none;" id="loader"></div>
+</div>
+
+<% } %>
+
+<%- include('../include/tool-footer.ejs') %>
