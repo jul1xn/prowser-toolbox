@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const config = require('./constants');
 const path = require('path');
 const db = new sqlite3.Database(path.resolve(__dirname, 'data.db'));
 
@@ -9,6 +10,19 @@ db.serialize(() => {
             count INTEGER DEFAULT 0
         )
     `);
+});
+
+db.serialize(() => {
+    const stmt = db.prepare(`
+            INSERT OR IGNORE INTO page_views (tool_url, count)
+            VALUES (?, 0)
+        `);
+
+    config.tools.forEach(tool => {
+        stmt.run(tool.url);
+    });
+
+    stmt.finalize();
 });
 
 function UpdatePageViews(tool_url, amount) {
@@ -37,6 +51,24 @@ function getPageViewsAsync(tool_url) {
     });
 }
 
+function getMostPopularTools(limit = 5) {
+    return new Promise((resolve, reject) => {
+        db.all(
+            `
+            SELECT tool_url, count
+            FROM page_views
+            ORDER BY count DESC, tool_url ASC
+            LIMIT ?
+            `,
+            [limit],
+            (err, rows) => {
+                if (err) return reject(err);
+                resolve(rows);
+            }
+        );
+    });
+}
+
 const viewCooldowns = new Map(); // key = `${ip}:${tool}`
 
 function canCountView(ip, tool_url) {
@@ -53,4 +85,4 @@ function canCountView(ip, tool_url) {
     return true;
 }
 
-module.exports = { UpdatePageViews, getPageViewsAsync, canCountView };
+module.exports = { UpdatePageViews, getPageViewsAsync, canCountView, getMostPopularTools };
