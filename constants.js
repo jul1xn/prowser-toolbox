@@ -56,6 +56,20 @@ const config = {
             }
         },
         {
+            name: "URL Shortener",
+            description: "Shorten any long URL with ease. Choose your own timeframe",
+            url: "url-shortener",
+            view: "url-shortener",
+            handler: async (req) => {
+                if (!req.query.url) return {};
+                else {
+                    const redirect = await data.getRedirect(req.query.url);
+                    console.log(redirect);
+                    return {...redirect, url: `/${redirect.short_key}` };
+                }
+            }
+        },
+        {
             name: "Youtube Downloader",
             description: "Download any youtube video with ease.",
             url: "youtube-downloader",

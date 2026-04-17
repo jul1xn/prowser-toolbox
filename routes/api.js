@@ -4,11 +4,32 @@ const config = require("../constants");
 const multerUpload = require("../multer");
 const path = require("path");
 const fs = require("fs");
-const { addUpload, getFileByKey } = require("../data");
+const { addUpload, getFileByKey, addRedirect } = require("../data");
 
 router.get("/tools", (req, res) => {
     res.json(config.tools);
 });
+
+router.post("/create-redirect", async (req, res) => {
+    if (!req.body) {
+        return res.status(400).send("Invalid request");
+    }
+
+    if (!req.body.url || !req.body.time) {
+        return res.status(400).send("Invalid request");
+    }
+
+    const { url, time } = req.body;
+    try {
+        const result = await addRedirect(url, time);
+        console.log(result);
+        
+        res.redirect(`/toolbox/url-shortener?url=${result.shortKey}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database error");
+    }
+})
 
 router.post("/file-upload", multerUpload.single("file"), async (req, res) => {
     if (!req.file) {

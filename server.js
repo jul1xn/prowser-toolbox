@@ -8,11 +8,18 @@ dotenv.config();
 data.initializePageViews(config.tools);
 
 app.set("view engine", "ejs");
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 app.get("/:key", async (req, res, next) => {
     const file = await data.getFileByKey(req.params.key);
     if (file) {
         return res.render("toolbox/temp-file-upload-view", { ...file, config, page: file.filename, file_size_formatted: data.formatSize(file.file_size) });
+    }
+
+    const redirect = await data.getRedirect(req.params.key);
+    if (redirect) {
+        return res.redirect(redirect.target_url);
     }
 
     return next();

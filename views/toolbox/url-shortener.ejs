@@ -1,0 +1,38 @@
+<%- include('../include/tool-header.ejs') %>
+
+<div class="mx-5 text-center">
+<% if (locals.url) { %>
+<h1 class="fw-light mb-2">Redirect link created <ion-icon name="checkmark-circle-outline" style="font-size: 32px; color: #28a745;"></ion-icon></h1>
+<div class="input-group my-3">
+  <input type="text" class="form-control" readonly aria-describedby="url-copy" value="https://toolbox.prowser.nl<%= locals.url %>">
+  <button class="btn btn-outline-secondary" type="button" id="url-copy">Copy</button>
+</div>
+<% } else { %>
+<form action="/api/create-redirect" method="POST">
+    <div class="mb-3">
+        <label for="url-input" class="form-label">URL</label>
+        <input type="text" class="form-control" id="url-input"
+            placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            name="url">
+    </div>
+
+    <div class="mb-3">
+        <label for="timeframe-input" class="form-label">Time frame</label>
+        <select class="form-select" id="timeframe-input" name="time">
+            <option selected value="300">5 minutes</option>
+            <option value="1800">30 minutes</option>
+            <option value="3600">1 hour</option>
+            <option value="21600">6 hours</option>
+            <option value="604 800">7 days</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <input class="btn btn-primary big-btn" type="submit" value="Submit" >
+    </div>
+</form>
+<% } %>
+</div>
+
+
+<%- include('../include/tool-footer.ejs') %>

@@ -3,6 +3,56 @@ const path = require('path');
 const fs = require("fs");
 const db = new sqlite3.Database(path.resolve(__dirname, 'data.db'));
 
+function cleanupExpiredRedirects() {
+    db.run(
+        `DELETE FROM redirects WHERE expires_at < ?`,
+        [Date.now()]
+    );
+}
+
+function cleanupExpiredUploads() {
+    const oneHourAgo = Date.now() - (60 * 60 * 1000);
+
+    db.all(
+        `SELECT * FROM uploads WHERE uploaded_at < ?`,
+        [oneHourAgo],
+        (err, rows) => {
+            if (err) {
+                console.error("Cleanup fetch error:", err);
+                return;
+            }
+
+            rows.forEach(file => {
+                const filePath = path.join(__dirname, "uploads", file.filename);
+
+                try {
+                    // delete file if exists
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                        console.log("Cleanup deleted file:", file.filename);
+                    }
+
+                    // delete DB record
+                    db.run(
+                        `DELETE FROM uploads WHERE id = ?`,
+                        [file.id],
+                        (err) => {
+                            if (err) {
+                                console.error("Cleanup DB delete error:", err);
+                            } else {
+                                console.log("Cleanup removed DB record:", file.file_key);
+                            }
+                        }
+                    );
+
+                } catch (err) {
+                    console.error("Cleanup error:", err);
+                }
+            });
+        }
+    );
+}
+
 db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS page_views (
@@ -11,14 +61,26 @@ db.serialize(() => {
         )
     `);
     db.run(`
-CREATE TABLE IF NOT EXISTS uploads (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    filename TEXT NOT NULL,
-    file_key TEXT UNIQUE NOT NULL,
-    uploaded_at TEXT NOT NULL,
-    file_size INTEGER NOT NULL DEFAULT 0
-)
-`);
+        CREATE TABLE IF NOT EXISTS uploads (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT NOT NULL,
+            file_key TEXT UNIQUE NOT NULL,
+            uploaded_at TEXT NOT NULL,
+            file_size INTEGER NOT NULL DEFAULT 0
+        )
+    `);
+    db.run(`
+        CREATE TABLE IF NOT EXISTS redirects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            short_key TEXT UNIQUE NOT NULL,
+            target_url TEXT NOT NULL,
+            created_at INTEGER NOT NULL,
+            expires_at INTEGER NOT NULL
+        )
+    `);
+
+    cleanupExpiredUploads();
+    cleanupExpiredRedirects();
 });
 
 function scheduleFileDeletion(fileKey, filename, delayMs = 60 * 60 * 1000) {
@@ -189,4 +251,70 @@ function canCountView(ip, tool_url) {
     return true;
 }
 
-module.exports = { UpdatePageViews, getPageViewsAsync, canCountView, getMostPopularTools, addUpload, getUploads, getFileByKey, initializePageViews, formatSize };
+function addRedirect(targetUrl, expiresInSeconds) {
+    return new Promise((resolve, reject) => {
+        const shortKey = generateFileKey(8);
+        const now = Date.now();
+        const expiresAt = now + (expiresInSeconds * 1000);
+
+        db.run(
+            `INSERT INTO redirects (short_key, target_url, created_at, expires_at)
+             VALUES (?, ?, ?, ?)`,
+            [shortKey, targetUrl, now, expiresAt],
+            function (err) {
+                if (err) return reject(err);
+
+                scheduleRedirectDeletion(shortKey, expiresAt - now);
+
+                resolve({
+                    id: this.lastID,
+                    shortKey
+                });
+            }
+        );
+    });
+}
+
+function getRedirect(shortKey) {
+    return new Promise((resolve, reject) => {
+        db.get(
+            `SELECT * FROM redirects WHERE short_key = ?`,
+            [shortKey],
+            (err, row) => {
+                if (err) return reject(err);
+
+                if (!row) return resolve(null);
+
+                // check expiration
+                if (Date.now() > row.expires_at) {
+                    deleteRedirect(shortKey);
+                    return resolve(null);
+                }
+
+                resolve(row);
+            }
+        );
+    });
+}
+
+function scheduleRedirectDeletion(shortKey, delayMs) {
+    setTimeout(() => {
+        deleteRedirect(shortKey);
+    }, delayMs);
+}
+
+function deleteRedirect(shortKey) {
+    db.run(
+        `DELETE FROM redirects WHERE short_key = ?`,
+        [shortKey],
+        (err) => {
+            if (err) {
+                console.error("Redirect delete error:", err);
+            } else {
+                console.log("Deleted redirect:", shortKey);
+            }
+        }
+    );
+}
+
+module.exports = {  getRedirect, deleteRedirect, addRedirect, UpdatePageViews, getPageViewsAsync, canCountView, getMostPopularTools, addUpload, getUploads, getFileByKey, initializePageViews, formatSize };
