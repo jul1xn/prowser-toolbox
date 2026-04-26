@@ -22,8 +22,6 @@ router.post("/create-redirect", async (req, res) => {
     const { url, time } = req.body;
     try {
         const result = await addRedirect(url, time);
-        console.log(result);
-        
         res.redirect(`/toolbox/url-shortener?url=${result.shortKey}`);
     } catch (err) {
         console.error(err);
@@ -41,7 +39,6 @@ router.post("/file-upload", multerUpload.single("file"), async (req, res) => {
 
     try {
         const result = await addUpload(filename, uploadedAt, req.file.size);
-
         res.redirect(`/toolbox/temp-file-upload?file=${result.fileKey}`);
     } catch (err) {
         console.error(err);

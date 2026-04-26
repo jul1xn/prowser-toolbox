@@ -13,13 +13,11 @@ app.use(express.urlencoded({extended: false}));
 
 app.get("/:key", async (req, res, next) => {
     const file = await data.getFileByKey(req.params.key);
-    console.log(file);
     if (file) {
         return res.render("toolbox/temp-file-upload-view", { ...file, config, page: file.filename, file_size_formatted: data.formatSize(file.file_size) });
     }
     
     const redirect = await data.getRedirect(req.params.key);
-    console.log(redirect);
     if (redirect) {
         return res.redirect(redirect.target_url);
     }
