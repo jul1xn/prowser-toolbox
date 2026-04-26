@@ -255,7 +255,7 @@ function addRedirect(targetUrl, expiresInSeconds) {
     return new Promise((resolve, reject) => {
         const shortKey = generateFileKey(8);
         const now = Date.now();
-        const expiresAt = now + (expiresInSeconds * 1000);
+        const expiresAt = now + (parseInt(expiresInSeconds) * 1000);
 
         db.run(
             `INSERT INTO redirects (short_key, target_url, created_at, expires_at)

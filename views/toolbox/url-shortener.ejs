@@ -3,9 +3,9 @@
 <div class="mx-5 text-center">
 <% if (locals.url) { %>
 <h1 class="fw-light mb-2">Redirect link created <ion-icon name="checkmark-circle-outline" style="font-size: 32px; color: #28a745;"></ion-icon></h1>
-<div class="input-group my-3">
-  <input type="text" class="form-control" readonly aria-describedby="url-copy" value="https://toolbox.prowser.nl<%= locals.url %>">
-  <button class="btn btn-outline-secondary" type="button" id="url-copy">Copy</button>
+<div class="input-group mt-5 mb-3">
+  <input type="text" class="form-control" id="url-copy" readonly aria-describedby="copy" value="https://toolbox.prowser.nl<%= locals.url %>">
+  <button class="btn btn-outline-secondary" type="button" id="copy" target="url-copy">Copy</button>
 </div>
 <% } else { %>
 <form action="/api/create-redirect" method="POST">
@@ -34,5 +34,5 @@
 <% } %>
 </div>
 
-
+<script src="/js/url-copy.js"></script>
 <%- include('../include/tool-footer.ejs') %>
