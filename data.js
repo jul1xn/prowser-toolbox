@@ -11,45 +11,9 @@ function cleanupExpiredRedirects() {
 }
 
 function cleanupExpiredUploads() {
-    const oneHourAgo = Date.now() - (60 * 60 * 1000);
-
-    db.all(
-        `SELECT * FROM uploads WHERE uploaded_at < ?`,
-        [oneHourAgo],
-        (err, rows) => {
-            if (err) {
-                console.error("Cleanup fetch error:", err);
-                return;
-            }
-
-            rows.forEach(file => {
-                const filePath = path.join(__dirname, "uploads", file.filename);
-
-                try {
-                    // delete file if exists
-                    if (fs.existsSync(filePath)) {
-                        fs.unlinkSync(filePath);
-                        console.log("Cleanup deleted file:", file.filename);
-                    }
-
-                    // delete DB record
-                    db.run(
-                        `DELETE FROM uploads WHERE id = ?`,
-                        [file.id],
-                        (err) => {
-                            if (err) {
-                                console.error("Cleanup DB delete error:", err);
-                            } else {
-                                console.log("Cleanup removed DB record:", file.file_key);
-                            }
-                        }
-                    );
-
-                } catch (err) {
-                    console.error("Cleanup error:", err);
-                }
-            });
-        }
+    db.run(
+        `DELETE FROM uploads WHERE expires_at < ?`,
+        [Date.now()]
     );
 }
 
@@ -63,15 +27,20 @@ db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS uploads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ip_addr TEXT NOT NULL,
+            usages INTEGER NOT NULL DEFAULT 0,
             filename TEXT NOT NULL,
             file_key TEXT UNIQUE NOT NULL,
-            uploaded_at TEXT NOT NULL,
+            uploaded_at INTEGER NOT NULL,
+            expires_at INTEGER NOT NULL,
             file_size INTEGER NOT NULL DEFAULT 0
         )
     `);
     db.run(`
         CREATE TABLE IF NOT EXISTS redirects (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usages INTEGER NOT NULL DEFAULT 0,
+            ip_addr TEXT NOT NULL,
             short_key TEXT UNIQUE NOT NULL,
             target_url TEXT NOT NULL,
             created_at INTEGER NOT NULL,
@@ -173,14 +142,14 @@ function getMostPopularTools(limit = 4) {
     });
 }
 
-function addUpload(filename, uploadedAt, fileSize) {
+function addUpload(filename, uploadedAt, expiresAt, fileSize, ip_addr) {
     return new Promise((resolve, reject) => {
         const fileKey = generateFileKey();
 
         db.run(
-            `INSERT INTO uploads (filename, file_key, uploaded_at, file_size)
-             VALUES (?, ?, ?, ?)`,
-            [filename, fileKey, uploadedAt, fileSize],
+            `INSERT INTO uploads (ip_addr, filename, file_key, uploaded_at, expires_at, file_size)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [ip_addr, filename, fileKey, uploadedAt, expiresAt, fileSize],
             function (err) {
                 if (err) return reject(err);
 
@@ -251,16 +220,48 @@ function canCountView(ip, tool_url) {
     return true;
 }
 
-function addRedirect(targetUrl, expiresInSeconds) {
+function getAllFiles(limit = 100) {
+    return new Promise((resolve, reject) => {
+        db.all(
+            `SELECT * FROM uploads ORDER BY uploaded_at LIMIT ?`,
+            [limit],
+            (err, rows) => {
+                if (err) return reject(err);
+
+                if (!rows) return resolve(null);
+
+                resolve(rows);
+            }
+        );
+    });
+}
+
+function getAllRedirects(limit = 100) {
+    return new Promise((resolve, reject) => {
+        db.all(
+            `SELECT * FROM redirects ORDER BY created_at LIMIT ?`,
+            [limit],
+            (err, rows) => {
+                if (err) return reject(err);
+
+                if (!rows) return resolve(null);
+
+                resolve(rows);
+            }
+        );
+    });
+}
+
+function addRedirect(targetUrl, expiresInSeconds, ip_address) {
     return new Promise((resolve, reject) => {
         const shortKey = generateFileKey(8);
         const now = Date.now();
         const expiresAt = now + (parseInt(expiresInSeconds) * 1000);
 
         db.run(
-            `INSERT INTO redirects (short_key, target_url, created_at, expires_at)
-             VALUES (?, ?, ?, ?)`,
-            [shortKey, targetUrl, now, expiresAt],
+            `INSERT INTO redirects (short_key, ip_addr, target_url, created_at, expires_at)
+             VALUES (?, ?, ?, ?, ?)`,
+            [shortKey, ip_address, targetUrl, now, expiresAt],
             function (err) {
                 if (err) return reject(err);
 
@@ -278,7 +279,7 @@ function addRedirect(targetUrl, expiresInSeconds) {
 function getRedirect(shortKey) {
     return new Promise((resolve, reject) => {
         db.get(
-            `SELECT * FROM redirects WHERE short_key = ?`,
+            `SELECT short_key, target_url, created_at, expires_at FROM redirects WHERE short_key = ?`,
             [shortKey],
             (err, row) => {
                 if (err) return reject(err);
@@ -292,6 +293,44 @@ function getRedirect(shortKey) {
                 }
 
                 resolve(row);
+            }
+        );
+    });
+}
+
+function incrementRedirectUsage(shortKey) {
+    return new Promise((resolve, reject) => {
+        db.run(
+            `
+            UPDATE redirects
+            SET usages = usages + 1
+            WHERE short_key = ?
+            `,
+            [shortKey],
+            function (err) {
+                if (err) return reject(err);
+
+                // this.changes = number of rows affected
+                resolve(this.changes > 0);
+            }
+        );
+    });
+}
+
+function incrementUploadUsage(fileKey) {
+    return new Promise((resolve, reject) => {
+        db.run(
+            `
+            UPDATE uploads
+            SET usages = usages + 1
+            WHERE file_key = ?
+            `,
+            [fileKey],
+            function (err) {
+                if (err) return reject(err);
+
+                // this.changes = number of rows affected
+                resolve(this.changes > 0);
             }
         );
     });
@@ -317,4 +356,4 @@ function deleteRedirect(shortKey) {
     );
 }
 
-module.exports = {  getRedirect, deleteRedirect, addRedirect, UpdatePageViews, getPageViewsAsync, canCountView, getMostPopularTools, addUpload, getUploads, getFileByKey, initializePageViews, formatSize };
+module.exports = { getAllFiles, incrementUploadUsage, incrementRedirectUsage, getRedirect, getAllRedirects, deleteRedirect, addRedirect, UpdatePageViews, getPageViewsAsync, canCountView, getMostPopularTools, addUpload, getUploads, getFileByKey, initializePageViews, formatSize };

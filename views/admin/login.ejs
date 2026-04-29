@@ -1,0 +1,18 @@
+<%- include('../include/header.ejs') %>
+
+<div class="container mt-5">
+    <form method="POST" action="">
+        <div class="mb-3">
+            <label for="passwordInput" class="display-5 form-label mb-3">Admin password</label>
+            <input type="password" class="form-control" id="passwordInput" name="password">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <% if (locals.error) { %>
+        <div class="alert alert-danger my-3" role="alert">
+        <%= locals.error %>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../include/footer.ejs') %>

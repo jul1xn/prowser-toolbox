@@ -20,8 +20,9 @@ router.post("/create-redirect", async (req, res) => {
     }
 
     const { url, time } = req.body;
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     try {
-        const result = await addRedirect(url, time);
+        const result = await addRedirect(url, time, ip);
         res.redirect(`/toolbox/url-shortener?url=${result.shortKey}`);
     } catch (err) {
         console.error(err);
@@ -35,10 +36,12 @@ router.post("/file-upload", multerUpload.single("file"), async (req, res) => {
     }
 
     const filename = req.file.filename;
-    const uploadedAt = new Date().toISOString();
+    const uploadedAt = Date.now();
+    const expiresAt = uploadedAt + (60 * 60 * 1000); // 1 hour
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     try {
-        const result = await addUpload(filename, uploadedAt, req.file.size);
+        const result = await addUpload(filename, uploadedAt, expiresAt, req.file.size, ip);
         res.redirect(`/toolbox/temp-file-upload?file=${result.fileKey}`);
     } catch (err) {
         console.error(err);

@@ -1,0 +1,101 @@
+<%- include('../include/header.ejs') %>
+
+  <div class="container mt-5 bg-body-tertiary rounded mb-3">
+    <ul class="nav nav-pills nav-fill my-3">
+      <li class="nav-item">
+        <a class="nav-link">Links</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link">Files</a>
+      </li>
+    </ul>
+    <table class="table table-bordered table-striped">
+      <% if (locals.type==="links" ) { %>
+        <thead>
+          <tr>
+            <th></th>
+            <th>IP</th>
+            <th>Usages</th>
+            <th>URL</th>
+            <th>Created at</th>
+            <th>Expires in</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% locals.data.forEach(row=> { %>
+            <tr id="link-row">
+              <td><button class="btn btn-primary" id="copy" target="copy-<%= row.id %>">Copy link</button></td>
+              <td>
+                <%= row.ip_addr %>
+              </td>
+              <td>
+                <%= row.usages %>
+              </td>
+              <td><a href="<%= row.target_url %>">
+                  <%= row.target_url %>
+                </a></td>
+              <td>
+                <%= new Date(row.created_at).toLocaleDateString(undefined, {year: 'numeric' , month: '2-digit' ,
+                  day: '2-digit' , hour: '2-digit' , hour12: false, minute:'2-digit', second:'2-digit'}) %>
+              </td>
+              <td id="link-expiration">?d ?h ?m ?s</td>
+              <td style="display: none;" id="link-expires-at">
+                <%= row.expires_at %>
+              </td>
+              <td style="display: none;" id="link-created-at">
+                <%= row.created_at %>
+              </td>
+              <input style="display: none;" value="https://toolbox.prowser.nl/<%= row.short_key %>"
+                id="copy-<%= row.id %>">
+            </tr>
+            <% }) %>
+        </tbody>
+        <% } else if (locals.type==="files" ) { %>
+        <thead>
+          <tr>
+            <th>IP</th>
+            <th>Usages</th>
+            <th>File name</th>
+            <th>URL</th>
+            <th>Created at</th>
+            <th>Expires in</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% locals.data.forEach(row=> { %>
+            <tr id="link-row">
+              <td>
+                <%= row.ip_addr %>
+              </td>
+              <td>
+                <%= row.usages %>
+              </td>
+              <td>
+                <%= row.filename %>
+              </td>
+              <td>
+                <a href="https://toolbox.prowser.nl/<%= row.file_key %>">
+                  https://toolbox.prowser.nl/<%= row.file_key %>
+                </a>
+              </td>
+              <td>
+                <%= new Date(row.uploaded_at).toLocaleDateString(undefined, {year: 'numeric' , month: '2-digit' ,
+                  day: '2-digit' , hour: '2-digit' , hour12: false, minute:'2-digit', second:'2-digit'}) %>
+              </td>
+              <td id="link-expiration">?d ?h ?m ?s</td>
+              <td style="display: none;" id="link-expires-at">
+                <%= row.expires_at %>
+              </td>
+              <td style="display: none;" id="link-created-at">
+                <%= row.uploaded_at %>
+              </td>
+            </tr>
+            <% }) %>
+        </tbody>
+        <% } %>
+    </table>
+  </div>
+
+  <script src="/js/admin-dashboard.js"></script>
+  <script src="/js/url-copy.js"></script>
+  <%- include('../include/footer.ejs') %>
